@@ -1,0 +1,33 @@
+{
+  "name": "sequilize-orm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start:app": "npm run build && node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aNazirov/sequilize-orm.git"
+  },
+  "author": "aNazirov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aNazirov/sequilize-orm/issues"
+  },
+  "homepage": "https://github.com/aNazirov/sequilize-orm#readme",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.13.13",
+    "husky": "^9.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
+  }
+}

@@ -32,7 +32,7 @@ export class User {
 
   //   if (user.balance < 0) {
   //     await transaction.rollback();
-  //     throw new Utils.CustomError("User balance cannot to be negative", 400);
+  //     throw new Utils.CustomError("User balance cannot be negative", 400);
   //   }
 
   //   await transaction.commit();
@@ -63,7 +63,7 @@ export class User {
     );
 
     if (!updatedUser) {
-      throw new Utils.CustomError("User balance cannot to be negative", 400);
+      throw new Utils.CustomError("User balance cannot be negative", 400);
     }
 
     return updatedUser;

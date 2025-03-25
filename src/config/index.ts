@@ -15,3 +15,9 @@ export const AppConfig: Types.AppConfig = {
   DATABASE,
   PORT: Number(process.env.PORT ?? 4000),
 };
+
+export const Modules = {
+  Sequelize: Symbol("SequelizeInstance"),
+  Services: { User: Symbol("Services.User") },
+  Controllers: { User: Symbol("Controllers.User") },
+} as const;

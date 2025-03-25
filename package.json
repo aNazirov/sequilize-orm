@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "init": "npm run build && node dist/db/init.js",
-    "start:app": "npm run build && node dist/index.js"
+    "start": "npm run build && node dist/index.js"
   },
   "repository": {
     "type": "git",

@@ -1,9 +1,20 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { singleton } from "tsyringe";
 
-@singleton()
-export class User extends Model {
-  balance!: number;
+interface UserAttributes {
+  id: number;
+  balance: number;
+}
+
+interface UserCreationAttributes {
+  balance: number;
+}
+
+export class User
+  extends Model<UserAttributes, UserCreationAttributes>
+  implements UserAttributes
+{
+  declare id: number;
+  declare balance: number;
 }
 
 export function initUser(sequelize: Sequelize) {
@@ -22,7 +33,7 @@ export function initUser(sequelize: Sequelize) {
       sequelize,
       modelName: "User",
       tableName: "users",
-      timestamps: true,
+      timestamps: false,
     }
   );
 

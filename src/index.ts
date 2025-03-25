@@ -1,11 +1,13 @@
 import * as os from "os";
 import "reflect-metadata";
+import { Sequelize } from "sequelize";
+import { container } from "tsyringe";
 import app from "./app";
-import { AppConfig } from "./config";
-import { Models, sequelize } from "./db";
+import { AppConfig, Modules } from "./config";
+import { SequelizeInstance } from "./db";
 import { Utils } from "./utils";
 
-const cleanup = async () => {
+const cleanup = async (sequelize: Sequelize) => {
   console.log("Cleaning up...");
 
   await sequelize.close();
@@ -15,13 +17,17 @@ const cleanup = async () => {
 };
 
 const main = async () => {
-  await sequelize.authenticate();
+  const sequelize = container.resolve<SequelizeInstance>(Modules.Sequelize);
+
+  console.log(`Checking database connection...`);
+
+  await sequelize.client.authenticate();
 
   console.log("Database is connected");
 
-  Models.init(sequelize);
+  Utils.setupGracefulShutdown(() => cleanup(sequelize.client));
 
-  Utils.setupGracefulShutdown(cleanup);
+  await sequelize.client.sync();
 
   app.listen(AppConfig.PORT, () => {
     console.log(

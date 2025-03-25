@@ -15,6 +15,8 @@ export class User
 {
   declare id: number;
   declare balance: number;
+
+  
 }
 
 export function initUser(sequelize: Sequelize) {

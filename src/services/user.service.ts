@@ -1,3 +1,4 @@
+import { QueryTypes } from "sequelize";
 import { Modules } from "src/config";
 import { SequelizeInstance } from "src/db";
 import { Utils } from "src/utils";
@@ -11,29 +12,60 @@ export class User {
     console.log(`User service has been initialized`);
   }
 
-  async updateBalance(id: number, amount: number) {
-    const transaction = await this.sequelize.client.transaction();
+  // async updateBalance(id: number, amount: number) {
+  //   const transaction = await this.sequelize.client.transaction({
+  //     isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE,
+  //   });
 
-    const user = await this.sequelize.client.models.User.findByPk(id, {
-      transaction,
-    });
+  //   const user = await this.sequelize.client.models.User.findByPk(id, {
+  //     transaction,
+  //   });
+
+  //   if (!user) {
+  //     await transaction.rollback();
+  //     throw new Utils.CustomError("User not found", 404);
+  //   }
+
+  //   await user.increment("balance", { by: amount, transaction });
+
+  //   await user.reload({ transaction });
+
+  //   if (user.balance < 0) {
+  //     await transaction.rollback();
+  //     throw new Utils.CustomError("User balance cannot to be negative", 400);
+  //   }
+
+  //   await transaction.commit();
+  //   return user;
+  // }
+
+  async updateBalance(id: number, amount: number) {
+    const user = await this.sequelize.client.models.User.findByPk(id);
 
     if (!user) {
-      await transaction.rollback();
       throw new Utils.CustomError("User not found", 404);
     }
 
-    await user.increment("balance", { by: amount, transaction });
+    const [updatedUser] = await this.sequelize.client.query<{
+      id: number;
+      balance: number;
+    }>(
+      `
+      UPDATE users
+      SET balance = balance + :amount
+      WHERE id = :id AND balance + :amount >= 0
+      RETURNING *;
+      `,
+      {
+        replacements: { id, amount },
+        type: QueryTypes.SELECT,
+      }
+    );
 
-
-    await user.reload({ transaction });
-
-    if (user.balance < 0) {
-      await transaction.rollback();
+    if (!updatedUser) {
       throw new Utils.CustomError("User balance cannot to be negative", 400);
     }
 
-    await transaction.commit();
-    return user;
+    return updatedUser;
   }
 }

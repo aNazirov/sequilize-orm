@@ -17,6 +17,7 @@ export class SequelizeInstance {
       database: AppConfig.DATABASE.DB,
       host: AppConfig.DATABASE.HOST,
       port: AppConfig.DATABASE.PORT,
+      logging: false,
     });
 
     this.client = sequelize as TypedSequelize;

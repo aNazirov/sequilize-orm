@@ -5,7 +5,8 @@
   "scripts": {
     "build": "tsc && tsc-alias",
     "init": "npm run build && node dist/db/init.js",
-    "start": "npm run build && node dist/index.js"
+    "start": "set UV_THREADPOOL_SIZE=8 && npm run build && node dist/index.js",
+    "dev": "set UV_THREADPOOL_SIZE=8 && ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts"
   },
   "repository": {
     "type": "git",
@@ -23,8 +24,9 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.13.13",
     "husky": "^9.1.7",
-    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "tsc-alias": "^1.8.11",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2"
   },
   "dependencies": {

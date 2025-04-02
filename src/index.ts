@@ -1,3 +1,4 @@
+import cluster from "node:cluster";
 import * as os from "os";
 import "reflect-metadata";
 import { Sequelize } from "sequelize";
@@ -17,23 +18,39 @@ const cleanup = async (sequelize: Sequelize) => {
 };
 
 const main = async () => {
-  const sequelize = container.resolve<SequelizeInstance>(Modules.Sequelize);
+  const numCPUs = os.cpus().length;
 
-  console.log(`Checking database connection...`);
+  console.log(numCPUs, process.env.UV_THREADPOOL_SIZE);
 
-  await sequelize.client.authenticate();
+  if (cluster.isPrimary) {
+    console.log(`Master ${process.pid} is running`);
+    for (let i = 0; i < numCPUs; i++) cluster.fork();
 
-  console.log("Database is connected");
+    cluster.on("exit", (worker, code, signal) => {
+      console.log(`Worker ${worker.process.pid} died`);
+      cluster.fork();
+    });
+  } else {
+    const sequelize = container.resolve<SequelizeInstance>(Modules.Sequelize);
 
-  Utils.setupGracefulShutdown(() => cleanup(sequelize.client));
+    console.log(`Checking database connection...`);
 
-  await sequelize.client.sync();
+    await sequelize.client.authenticate();
 
-  app.listen(AppConfig.PORT, () => {
-    console.log(
-      `🚀 Core server ready on dev mode at: ${os.hostname()}:${AppConfig.PORT}`
-    );
-  });
+    console.log("Database is connected");
+
+    Utils.setupGracefulShutdown(() => cleanup(sequelize.client));
+
+    await sequelize.client.sync();
+
+    app.listen(AppConfig.PORT, () => {
+      console.log(
+        `🚀 Core server ready on dev mode at: ${os.hostname()}:${
+          AppConfig.PORT
+        }`
+      );
+    });
+  }
 };
 
 main();

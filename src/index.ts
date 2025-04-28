@@ -17,10 +17,8 @@ const cleanup = async (sequelize: Sequelize) => {
   console.log("Cleanup done");
 };
 
-const main = async () => {
+const main = async () => {  
   const numCPUs = os.cpus().length;
-
-  console.log(numCPUs, process.env.UV_THREADPOOL_SIZE);
 
   if (cluster.isPrimary) {
     console.log(`Master ${process.pid} is running`);

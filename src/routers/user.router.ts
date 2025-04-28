@@ -20,6 +20,5 @@ const controller = container.resolve<Controllers.User>(
 );
 
 router.patch("/:userId/balance", controller.updateBalance);
-// router.patch("/:userId", controller.update);
 
 export { router };
